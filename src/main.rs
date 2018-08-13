@@ -1,4 +1,5 @@
 const ROW_SIZE: u8 = 9;
+const MIN_CELLS_FILLED: usize = 17;
 
 fn get_square(col: u8, row: u8) -> u8 {
 	if row < 3 {
@@ -119,11 +120,29 @@ impl<'a> Square<'a> {
 	}
 }
 
+enum SudokuErr {
+	GrillSize,
+	MultResult,
+}
+
 struct Sudoku {
 	cells: Box<[Cell]>,
 }
 
 impl Sudoku {
+	fn new(grill: &[Option<u8>]) -> Result<Self, SudokuErr> {
+		if grill.iter().filter(|x| x.is_some()).count() < MIN_CELLS_FILLED {
+			return Err(SudokuErr::MultResult);
+		}
+		if grill.len() != (ROW_SIZE * ROW_SIZE) as usize {
+			return Err(SudokuErr::GrillSize);
+		}
+
+		let vec: Vec<Cell>= grill.iter().enumerate()
+			.map(|(i, x)| Cell::new(i as u8, *x))
+			.collect();
+		Ok (Self {cells: vec.into_boxed_slice()})
+	}
 	fn column(&self, index: u8) -> Column {
 		Column::new(&self.cells, index)
 	}
