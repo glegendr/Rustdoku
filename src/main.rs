@@ -1,3 +1,7 @@
+extern crate colored;
+
+use colored::*;
+
 const ROW_SIZE: u8 = 9;
 const MIN_CELLS_FILLED: usize = 17;
 
@@ -162,16 +166,40 @@ impl Sudoku {
 	}
 }
 
-use std::env;
-fn main() {
+fn print_sudoku(sudoku: Sudoku) {
 	let mut i = 0;
-	let v: Vec<Option<u8>>;
-for argument in env::args() {
-	if i != 0 {
-		println!("{}", argument);
+	for cell in sudoku.cells.iter() {
+			let mut print: String = ".".to_string();
+		if cell.nb != None {
+			print = format!("{}", cell.nb.unwrap());
+		}
+			let sq = cell.square;
+			if sq % 2 == 0 {
+				print!("{}", format!("{} ", print.yellow().strikethrough().bold()));
+			} else {
+				print!("{}", format!("{} ", print.red().bold()));
+			}
+		i = i + 1;
+		if i % 9 == 0 {
+			println!("");
+		}
 	}
-	i = 1;
 }
+
+fn main() {
+		let grill: &[Option<u8>] = &[
+		Some(1), Some(2), Some(3), None, None, None, None, None, None,
+		None, Some(6), None, None, None, None, None, None, Some(1),
+		None, None, None, Some(8), None, None, None, None, None,
+		None, None, None, None, Some(7), None, None, None, None,
+		None, None, None, None, None, Some(8), None, None, None,
+		None, None, None, Some(3), Some(4), None, None, None, None,
+		None, Some(3), None, None, None, None, Some(1), Some(7), Some(9),
+		None, None, Some(5), None, None, None, Some(6), None, None,
+		None, None, None, None, Some(2), None, None, None, None
+		];
+		let sudo = Sudoku::new(grill);
+		print_sudoku(sudo.unwrap());
 }
 
 #[cfg(test)]
