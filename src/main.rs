@@ -4,6 +4,17 @@ use colored::*;
 
 const ROW_SIZE: u8 = 9;
 const MIN_CELLS_FILLED: usize = 17;
+const GRILL: &[Option<u8>] = &[
+		Some(1), Some(2), Some(3), None, None, None, None, None, None,
+		None, Some(6), None, None, None, None, None, None, Some(1),
+		None, None, None, Some(8), None, None, None, None, None,
+		None, None, None, None, Some(7), None, None, None, None,
+		None, None, None, None, None, Some(8), None, None, None,
+		None, None, None, Some(3), Some(4), None, None, None, None,
+		None, Some(3), None, None, None, None, Some(1), Some(7), Some(9),
+		None, None, Some(5), None, None, None, Some(6), None, None,
+		None, None, None, None, Some(2), None, None, None, None
+		];
 
 fn get_square(col: u8, row: u8) -> u8 {
 	if row < 3 {
@@ -54,23 +65,36 @@ impl Cell {
 		self.pos.extend(row.get_pos());
 		self.pos.extend(square.get_pos());
 		self.pos.sort();
-		self.pos.dedup();
+		let mut i = 1;
+		let mut v = Vec::new();
+		while i < 10 {
+			if self.pos.iter().filter(|&x| *x == i).count() == 3 {
+				v.push(i);
+			}
+			i = i + 1;
+		}
+		self.pos = v;
 	}
 }
 
 struct Column<'a> {
-	cells: &'a [Cell],
+	cells: Vec<&'a Cell>,
 	index: u8,
 }
 
 impl<'a> Column<'a> {
 	fn new (cells: &'a [Cell], index: u8) -> Self {
-		Self {cells: cells, index: index}
+		let mut i = 1;
+		let mut col: Vec<&'a Cell> = vec![&cells[index as usize]];
+		while i < ROW_SIZE {
+			col.push(&cells[(index + ROW_SIZE * i) as usize]);
+			i = i + 1;
+		}
+		Self {cells: col, index: index}
 	}
 	fn get_pos(&self) -> Vec<u8> {
 		let v: Vec<u8> = self.cells.iter()
 			.skip(self.index as usize)
-			.step_by(ROW_SIZE as usize)
 			.filter(|x| x.nb.is_some())
 			.map(|x| x.nb.unwrap())
 			.collect();
@@ -185,21 +209,46 @@ fn print_sudoku(sudoku: Sudoku) {
 		}
 	}
 }
+/*
+	fn test_col_get_pos() {
+		let sudo = Sudoku::new(GRILL);
+		let sudo2 = sudo.unwrap();
+		let col = Sudoku::column(&sudo2, 2);
+		let test = col.get_pos();
+		println!("{:?}", test);
+	}
 
+	fn test_square_get_pos() {
+		let sudo = Sudoku::new(GRILL);
+		let sudo2 = sudo.unwrap();
+		let sq = Sudoku::square(&sudo2, 0);
+		let test = sq.get_pos();
+		println!("{:?}", test);
+	}
+
+	fn test_row_get_pos() {
+		let sudo = Sudoku::new(GRILL);
+		let sudo2 = sudo.unwrap();
+		let sq = Sudoku::row(&sudo2, 0);
+		let test = sq.get_pos();
+		println!("{:?}", test);
+	}
+
+	fn test_cell_get_pos() {
+		let sudo = Sudoku::new(GRILL);
+		let mut sudo2 = sudo.unwrap();
+		let cell = sudo2.cells.get_mut(0).unwrap();
+		cell.get_pos(Sudoku::new(GRILL).unwrap());
+		println!("{:?}", cell);
+	}
+*/
 fn main() {
-		let grill: &[Option<u8>] = &[
-		Some(1), Some(2), Some(3), None, None, None, None, None, None,
-		None, Some(6), None, None, None, None, None, None, Some(1),
-		None, None, None, Some(8), None, None, None, None, None,
-		None, None, None, None, Some(7), None, None, None, None,
-		None, None, None, None, None, Some(8), None, None, None,
-		None, None, None, Some(3), Some(4), None, None, None, None,
-		None, Some(3), None, None, None, None, Some(1), Some(7), Some(9),
-		None, None, Some(5), None, None, None, Some(6), None, None,
-		None, None, None, None, Some(2), None, None, None, None
-		];
-		let sudo = Sudoku::new(grill);
+		let sudo = Sudoku::new(GRILL);
 		print_sudoku(sudo.unwrap());
+//		test_col_get_pos();
+//		test_square_get_pos();
+//		test_row_get_pos();
+//		test_cell_get_pos();
 }
 
 #[cfg(test)]
@@ -257,19 +306,80 @@ mod tests {
 		assert_eq!(square, cell.square);
 	}
 #[test]
+	fn test_col_new() {
+		let sudo = Sudoku::new(GRILL);
+		let sudo2 = sudo.unwrap();
+		let col = Sudoku::column(&sudo2, 1);
+		let tmp = col.cells.get(0).unwrap();
+		assert_eq!(Some(2), tmp.nb);
+		let tmp = col.cells.get(1).unwrap();
+		assert_eq!(Some(6), tmp.nb);
+		let tmp = col.cells.get(2).unwrap();
+		assert_eq!(None, tmp.nb);
+		let tmp = col.cells.get(3).unwrap();
+		assert_eq!(None, tmp.nb);
+		let tmp = col.cells.get(4).unwrap();
+		assert_eq!(None, tmp.nb);
+		let tmp = col.cells.get(5).unwrap();
+		assert_eq!(None, tmp.nb);
+		let tmp = col.cells.get(6).unwrap();
+		assert_eq!(Some(3), tmp.nb);
+		let tmp = col.cells.get(7).unwrap();
+		assert_eq!(None, tmp.nb);
+		let tmp = col.cells.get(8).unwrap();
+		assert_eq!(None, tmp.nb);
+	}
+#[test]
+	fn test_square_new() {
+		let sudo = Sudoku::new(GRILL);
+		let sudo2 = sudo.unwrap();
+		let col = Sudoku::square(&sudo2, 0);
+		let tmp = col.cells.get(0).unwrap();
+		assert_eq!(Some(1), tmp.nb);
+		let tmp = col.cells.get(1).unwrap();
+		assert_eq!(Some(2), tmp.nb);
+		let tmp = col.cells.get(2).unwrap();
+		assert_eq!(Some(3), tmp.nb);
+		let tmp = col.cells.get(3).unwrap();
+		assert_eq!(None, tmp.nb);
+		let tmp = col.cells.get(4).unwrap();
+		assert_eq!(Some(6), tmp.nb);
+		let tmp = col.cells.get(5).unwrap();
+		assert_eq!(None, tmp.nb);
+		let tmp = col.cells.get(6).unwrap();
+		assert_eq!(None, tmp.nb);
+		let tmp = col.cells.get(7).unwrap();
+		assert_eq!(None, tmp.nb);
+		let tmp = col.cells.get(8).unwrap();
+		assert_eq!(None, tmp.nb);
+	}
+#[test]
+	fn test_row_new() {
+		let sudo = Sudoku::new(GRILL);
+		let sudo2 = sudo.unwrap();
+		let col = Sudoku::row(&sudo2, 0);
+		let tmp = col.row.get(0).unwrap();
+		assert_eq!(Some(1), tmp.nb);
+		let tmp = col.row.get(1).unwrap();
+		assert_eq!(Some(2), tmp.nb);
+		let tmp = col.row.get(2).unwrap();
+		assert_eq!(Some(3), tmp.nb);
+		let tmp = col.row.get(3).unwrap();
+		assert_eq!(None, tmp.nb);
+		let tmp = col.row.get(4).unwrap();
+		assert_eq!(None, tmp.nb);
+		let tmp = col.row.get(5).unwrap();
+		assert_eq!(None, tmp.nb);
+		let tmp = col.row.get(6).unwrap();
+		assert_eq!(None, tmp.nb);
+		let tmp = col.row.get(7).unwrap();
+		assert_eq!(None, tmp.nb);
+		let tmp = col.row.get(8).unwrap();
+		assert_eq!(None, tmp.nb);
+	}
+#[test]
 	fn test_sudoku_new() {
-		let grill: &[Option<u8>] = &[
-		Some(1), Some(2), Some(3), None, None, None, None, None, None,
-		None, Some(6), None, None, None, None, None, None, Some(1),
-		None, None, None, Some(8), None, None, None, None, None,
-		None, None, None, None, Some(7), None, None, None, None,
-		None, None, None, None, None, Some(8), None, None, None,
-		None, None, None, Some(3), Some(4), None, None, None, None,
-		None, Some(3), None, None, None, None, Some(1), Some(7), Some(9),
-		None, None, Some(5), None, None, None, Some(6), None, None,
-		None, None, None, None, Some(2), None, None, None, None
-		];
-		let sudo = Sudoku::new(grill);
+		let sudo = Sudoku::new(GRILL);
 		assert!(sudo.is_ok());
 	/*	match sudo {
 			Err(SudokuErr::GrillSize) => assert_eq!(1, 2),
