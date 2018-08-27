@@ -32,23 +32,36 @@ nb: nb,
 		square: get_square(col, row),
 		}
 	}
-	pub fn get_pos(&mut self, sud: Sudoku) {
-		let col = sud.column(self.col);
-		let row = sud.row(self.row);
-		let square = sud.square(self.square);
-		self.pos = Vec::new();
-		self.pos.extend(col.get_pos());
-		self.pos.extend(row.get_pos());
-		self.pos.extend(square.get_pos());
-		self.pos.sort();
-		let mut i = 1;
-		let mut v = Vec::new();
-		while i < 10 {
-			if self.pos.iter().filter(|&x| *x == i).count() == 3 {
-				v.push(i);
-			}
-			i = i + 1;
+}
+
+pub fn cell_pos(index: usize, sud: &mut Sudoku) {
+	let (col_index, row_index, square_index, nb) = {
+		let mut cell = sud.cells.get_mut(index).unwrap();
+		(cell.col, cell.row, cell.square, cell.nb)
+		};
+	let (col, row, square) = {
+		let col = sud.column(col_index).get_pos();
+		let row = sud.row(row_index).get_pos();
+		let square = sud.square(square_index).get_pos();
+		(col, row, square)
+	};
+	let cell = sud.cells.get_mut(index).unwrap();
+	cell.pos = Vec::new();
+	cell.pos.extend(col);
+	cell.pos.extend(row);
+	cell.pos.extend(square);
+	cell.pos.sort();
+	let mut v = Vec::new();
+	for i in 1..=ROW_SIZE {
+		if cell.pos.iter().filter(|&x| *x == i).count() == 3 {
+			v.push(i);
 		}
-		self.pos = v;
+	}
+	cell.pos = v;
+	if nb != None {
+		cell.pos.clear();
+	}
+	if square_index == 1 {
+		println!("{:?}", cell.pos);
 	}
 }
