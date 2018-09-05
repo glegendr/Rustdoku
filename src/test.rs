@@ -4,8 +4,19 @@ use column::Column;
 use square::Square;
 use row::Row;
 use ROW_SIZE;
-use GRILL;
 use get_square;
+const GRILL: &[Option<u8>] = &[
+	Some(1), Some(2), Some(3), None, None, None, None, None, None,
+	Some(8), Some(7), Some(6), None, None, None, None, None, Some(1),
+	None, Some(9), Some(4), Some(8), None, None, None, None, None,
+	None, Some(6), None, None, Some(7), None, None, None, None,
+	None, None, None, None, None, Some(8), None, None, None,
+	None, None, None, Some(3), Some(4), None, None, None, None,
+	None, None, None, None, None, None, Some(1), Some(7), Some(9),
+	None, None, Some(5), None, None, None, Some(6), None, None,
+	None, None, None, Some(6), Some(2), Some(1), None, None, None
+];
+
 
 #[cfg(test)]
 mod tests {
@@ -69,21 +80,39 @@ mod tests {
 		let tmp = col.cells.get(0).unwrap();
 		assert_eq!(Some(2), tmp.nb);
 		let tmp = col.cells.get(1).unwrap();
-		assert_eq!(Some(6), tmp.nb);
+		assert_eq!(Some(7), tmp.nb);
 		let tmp = col.cells.get(2).unwrap();
-		assert_eq!(None, tmp.nb);
+		assert_eq!(Some(9), tmp.nb);
 		let tmp = col.cells.get(3).unwrap();
-		assert_eq!(None, tmp.nb);
+		assert_eq!(Some(6), tmp.nb);
 		let tmp = col.cells.get(4).unwrap();
 		assert_eq!(None, tmp.nb);
 		let tmp = col.cells.get(5).unwrap();
 		assert_eq!(None, tmp.nb);
 		let tmp = col.cells.get(6).unwrap();
-		assert_eq!(Some(3), tmp.nb);
+		assert_eq!(None, tmp.nb);
 		let tmp = col.cells.get(7).unwrap();
 		assert_eq!(None, tmp.nb);
 		let tmp = col.cells.get(8).unwrap();
 		assert_eq!(None, tmp.nb);
+	}
+#[test]
+	fn test_col_pos() {
+		let sudo = Sudoku::new(GRILL);
+		let sudo2 = sudo.unwrap();
+		let col = Sudoku::column(&sudo2, 1);
+		let test = col.get_pos();
+		let tmp = *test.get(0).unwrap();
+		assert_eq!(1, tmp);
+		let tmp = *test.get(1).unwrap();
+		assert_eq!(3, tmp);
+		let tmp = *test.get(2).unwrap();
+		assert_eq!(4, tmp);
+		let tmp = *test.get(3).unwrap();
+		assert_eq!(5, tmp);
+		let tmp = *test.get(4).unwrap();
+		assert_eq!(8, tmp);
+
 	}
 #[test]
 	fn test_square_new() {
@@ -97,17 +126,17 @@ mod tests {
 		let tmp = col.cells.get(2).unwrap();
 		assert_eq!(Some(3), tmp.nb);
 		let tmp = col.cells.get(3).unwrap();
-		assert_eq!(None, tmp.nb);
+		assert_eq!(Some(8), tmp.nb);
 		let tmp = col.cells.get(4).unwrap();
-		assert_eq!(Some(6), tmp.nb);
+		assert_eq!(Some(7), tmp.nb);
 		let tmp = col.cells.get(5).unwrap();
-		assert_eq!(None, tmp.nb);
+		assert_eq!(Some(6), tmp.nb);
 		let tmp = col.cells.get(6).unwrap();
 		assert_eq!(None, tmp.nb);
 		let tmp = col.cells.get(7).unwrap();
-		assert_eq!(None, tmp.nb);
+		assert_eq!(Some(9), tmp.nb);
 		let tmp = col.cells.get(8).unwrap();
-		assert_eq!(None, tmp.nb);
+		assert_eq!(Some(4), tmp.nb);
 	}
 #[test]
 	fn test_row_new() {

@@ -16,20 +16,25 @@ mod test;
 const ROW_SIZE: u8 = 9;
 const MIN_CELLS_FILLED: usize = 17;
 const GRILL: &[Option<u8>] = &[
-		Some(1), Some(2), Some(3), None, None, None, None, None, None,
-		Some(8), Some(6), Some(7), None, None, None, None, None, Some(1),
-		None, Some(9), Some(4), Some(8), None, None, None, None, None,
-		None, None, None, None, Some(7), None, None, None, None,
-		None, None, None, None, None, Some(8), None, None, None,
-		None, None, None, Some(3), Some(4), None, None, None, None,
-		None, Some(3), None, None, None, None, Some(1), Some(7), Some(9),
-		None, None, Some(5), None, None, None, Some(6), None, None,
-		None, None, None, None, Some(2), Some(1), None, None, None
+		None, Some(2), Some(1), None, Some(8), None, Some(3), Some(5), None,
+		None, Some(6), None, Some(9), None, None, None, None, None,
+		None, None, None, None, Some(2), None, Some(6), Some(1), None,
+		None, None, Some(8), Some(2), Some(7), Some(9), Some(1), Some(6), None,
+		Some(6), None, None, Some(5), Some(3), Some(1), None, None, Some(2),
+		Some(2), Some(1), None, Some(4), Some(6), Some(8), Some(9), None, Some(5),
+		None, None, Some(6), None, Some(4), None, Some(5), None, None,
+		Some(7), Some(4), Some(5), None, Some(9), None, None, None, None,
+		Some(1), Some(8), Some(2), None, Some(5), None, Some(4), Some(9), Some(6)
 		];
 
 pub fn resolv(mut grill: Sudoku) -> Result<Sudoku, SudokuErr> {
 	grill.get_pos();
-	grill.inclusive();
+	for i in 0..3 {
+		if grill.inclusive() == true {
+			grill.get_pos();
+		}
+		grill.exclusiv();
+	}
 	Ok(grill)
 }
 
@@ -43,11 +48,7 @@ fn get_square(col: u8, row: u8) -> u8 {
 	}
 }
 
-fn get_square_pos(index: u8, sq_index: u8, sudo: &mut Sudoku) {
-		
-	}
-
-fn print_sudoku(sudoku: Sudoku) {
+fn print_sudoku(sudoku: &Sudoku) {
 	let mut i = 0;
 	for cell in sudoku.cells.iter() {
 			let mut print: String = ".".to_string();
@@ -71,8 +72,12 @@ fn main() {
 	let sudo = Sudoku::new(GRILL);
 	match sudo {
 		Ok(sudoku) => {
+			//print_sudoku(&sudoku);
 			match resolv(sudoku) {
-				Ok(sudoku) => print_sudoku(sudoku),
+				Ok(sudoku) => {
+					println!();
+					print_sudoku(&sudoku);
+				},
 				Err(er) => println!("Error: Grill not well formated ({:?})", er),
 			}
 		},
