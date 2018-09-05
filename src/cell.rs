@@ -63,12 +63,13 @@ pub fn cell_pos(index: usize, sud: &mut Sudoku) {
 		}
 		cell.pos = v;
 	}
+
 	for size in 2..4 {
 		let mut v = Vec::new();
 		for index2 in 0..((ROW_SIZE * ROW_SIZE) as usize) {
-			if index2 == index {
-				continue;
-			}
+		//	if index2 == index {
+		//		continue;
+		//	}
 			let (square_index2, row_index2, col_index2, nb2, pos) = {
 				let cell = sud.cells.get_mut(index2).unwrap();
 				(cell.square, cell.row, cell.col, cell.nb, cell.pos.clone())
@@ -86,11 +87,14 @@ pub fn cell_pos(index: usize, sud: &mut Sudoku) {
 				v.extend(del_col(sud, col_index, size));
 			}
 		}
+		if v.len() == 0 {
+			continue;
+		}
 		v.sort();
 		v.dedup();
 		let cell = sud.cells.get_mut(index).unwrap();
 		let mut tmp = cell.pos.clone();
-	//	if col_index == 3 && row_index == 0 {
+	//	if col_index == 6 {
 	//		print!("del:{:?} before:{:?} ", v, tmp);
 	//	}
 		for i in 0..v.len() {
@@ -101,12 +105,12 @@ pub fn cell_pos(index: usize, sud: &mut Sudoku) {
 				}
 			}
 		}
-		if tmp.len() == 0 {
-			return;
-		}
-	//	if col_index == 3 && row_index == 0 {
+	//	if col_index == 6 {
 	//		println!("after:{:?}", tmp);
 	//	}
+		if tmp.len() == 0 {
+			continue;
+		}
 		cell.pos = tmp;
 		//	if square_index == 1 {
 		//		println!("{:?}", cell.pos);
@@ -126,22 +130,16 @@ fn del_square(sud: &mut Sudoku, square_index: u8, size: usize) -> Vec<u8> {
 		}
 	}
 	for y in 0..tmp.len() {
-		for y2 in 0..tmp.len() {
-			if y == y2 {
-				continue;
-			}
-			if tmp.get(y) == tmp.get(y2) {
-				del.push(*tmp.get(y).unwrap().get(0).unwrap());
-				del.push(*tmp.get(y).unwrap().get(1).unwrap());
-				if size == 3 {
-					del.push(*tmp.get(y).unwrap().get(2).unwrap());
-				}
+		let count = tmp.iter().filter(|&x| *x == *tmp.get(y).unwrap()).count();
+		if count == size {
+			for i in 0..size {
+			del.push(*tmp.get(y).unwrap().get(i).unwrap());
 			}
 		}
 	}
 	del.sort();
 	del.dedup();
-//	if del.len() != 0 {
+//	if square_index == 2 && size == 3 {
 //		println!("{}: {:?}", square_index, del);
 //	}
 	return del;
@@ -159,16 +157,10 @@ fn del_row(sud: &mut Sudoku, row_index: u8, size: usize) -> Vec<u8> {
 		}
 	}
 	for y in 0..tmp.len() {
-		for y2 in 0..tmp.len() {
-			if y == y2 {
-				continue;
-			}
-			if tmp.get(y) == tmp.get(y2) {
-				del.push(*tmp.get(y).unwrap().get(0).unwrap());
-				del.push(*tmp.get(y).unwrap().get(1).unwrap());
-				if size == 3 {
-					del.push(*tmp.get(y).unwrap().get(2).unwrap());
-				}
+		let count = tmp.iter().filter(|&x| *x == *tmp.get(y).unwrap()).count();
+		if count == size {
+			for i in 0..size {
+			del.push(*tmp.get(y).unwrap().get(i).unwrap());
 			}
 		}
 	}
@@ -192,22 +184,19 @@ fn del_col(sud: &mut Sudoku, col_index: u8, size: usize) -> Vec<u8> {
 		}
 	}
 	for y in 0..tmp.len() {
-		for y2 in 0..tmp.len() {
-			if y == y2 {
-				continue;
-			}
-			if tmp.get(y) == tmp.get(y2) {
-				del.push(*tmp.get(y).unwrap().get(0).unwrap());
-				del.push(*tmp.get(y).unwrap().get(1).unwrap());
-				if size == 3 {
-					del.push(*tmp.get(y).unwrap().get(2).unwrap());
-				}
+		let count = tmp.iter().filter(|&x| x == tmp.get(y).unwrap()).count();
+		if col_index == 6  && size == 3 {
+//		println!("col:{} -> {}", col_index, count);
+		}
+		if count == size {
+			for i in 0..size {
+			del.push(*tmp.get(y).unwrap().get(i).unwrap());
 			}
 		}
 	}
 	del.sort();
 	del.dedup();
-//	if del.len() != 0 {
+//	if col_index == 6 && size == 3 {
 //		println!("{}: {:?}", col_index, del);
 //	}
 	return del;

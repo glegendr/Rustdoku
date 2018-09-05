@@ -23,12 +23,13 @@ const GRILL: &[Option<u8>] = &[
 		Some(5), None, None, None, Some(2), Some(1), None, Some(7), None,
 		None, None, Some(1), Some(9), None, None, None, None, Some(5),
 		None, Some(2), None, None, None, None, Some(3), None, None,
-		None, None, Some(4), None, None, None, None, None, Some(2),
+		None, None, Some(4), None, None, None, Some(1), None, Some(2),
 		Some(7), None, None, None, None, None, None, Some(4), None
 		];
 
 pub fn resolv(mut grill: Sudoku) -> Result<Sudoku, SudokuErr> {
 	let mut my_bool = true;
+	grill.get_pos();
 	grill.get_pos();
 	while my_bool == true {
 		my_bool = false;
@@ -38,6 +39,20 @@ pub fn resolv(mut grill: Sudoku) -> Result<Sudoku, SudokuErr> {
 		}
 		if grill.exclusiv() == true {
 			my_bool = true;
+		}
+	}
+	let mut tmp = 0;
+	for i in 0..81 {
+		let cell = grill.cells.get(i).unwrap();
+		if cell.nb != None {
+			continue;
+		}
+		print!("{} {} pos:{:?}         ", cell.row, cell.col, cell.pos);
+		if tmp == 0 {
+			tmp = 1
+		} else {
+			println!();
+			tmp = 0;
 		}
 	}
 	Ok(grill)
@@ -77,7 +92,6 @@ fn main() {
 	let sudo = Sudoku::new(GRILL);
 	match sudo {
 		Ok(sudoku) => {
-			//print_sudoku(&sudoku);
 			match resolv(sudoku) {
 				Ok(sudoku) => {
 					println!();
