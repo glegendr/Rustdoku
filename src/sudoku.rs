@@ -44,11 +44,14 @@ impl Sudoku {
 
 	pub fn inclusive(&mut self) -> bool {
 		let mut my_bool = false;
-		for index  in 0..((ROW_SIZE * ROW_SIZE) as usize) {
-			let cell_len = {
+		for index in 0..((ROW_SIZE * ROW_SIZE) as usize) {
+			let (cell_len, cell_nb) = {
 				let mut cell = self.cells.get_mut(index).unwrap();
-				cell.pos.len()
+				(cell.pos.len(), cell.nb)
 			};
+			if cell_nb != None {
+				continue;
+			}
 			if cell_len == 1 {
 				let nb = *self.cells.get_mut(index).unwrap().pos.get(0).unwrap();
 				self.replace(Some(nb), index as u8);

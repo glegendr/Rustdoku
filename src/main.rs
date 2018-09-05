@@ -16,24 +16,29 @@ mod test;
 const ROW_SIZE: u8 = 9;
 const MIN_CELLS_FILLED: usize = 17;
 const GRILL: &[Option<u8>] = &[
-		None, Some(2), Some(1), None, Some(8), None, Some(3), Some(5), None,
-		None, Some(6), None, Some(9), None, None, None, None, None,
-		None, None, None, None, Some(2), None, Some(6), Some(1), None,
-		None, None, Some(8), Some(2), Some(7), Some(9), Some(1), Some(6), None,
-		Some(6), None, None, Some(5), Some(3), Some(1), None, None, Some(2),
-		Some(2), Some(1), None, Some(4), Some(6), Some(8), Some(9), None, Some(5),
-		None, None, Some(6), None, Some(4), None, Some(5), None, None,
-		Some(7), Some(4), Some(5), None, Some(9), None, None, None, None,
-		Some(1), Some(8), Some(2), None, Some(5), None, Some(4), Some(9), Some(6)
+		None, None, Some(5), Some(4), None, None, None, None, Some(1),
+		None, Some(8), None, None, None, Some(6), Some(7), Some(5), None,
+		None, None, None, None, Some(3), None, None, Some(9), None,
+		None, Some(6), None, None, None, Some(8), Some(4), None, None,
+		Some(5), None, None, None, Some(2), Some(1), None, Some(7), None,
+		None, None, Some(1), Some(9), None, None, None, None, Some(5),
+		None, Some(2), None, None, None, None, Some(3), None, None,
+		None, None, Some(4), None, None, None, None, None, Some(2),
+		Some(7), None, None, None, None, None, None, Some(4), None
 		];
 
 pub fn resolv(mut grill: Sudoku) -> Result<Sudoku, SudokuErr> {
+	let mut my_bool = true;
 	grill.get_pos();
-	for i in 0..3 {
+	while my_bool == true {
+		my_bool = false;
 		if grill.inclusive() == true {
 			grill.get_pos();
+			my_bool = true;
 		}
-		grill.exclusiv();
+		if grill.exclusiv() == true {
+			my_bool = true;
+		}
 	}
 	Ok(grill)
 }

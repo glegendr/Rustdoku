@@ -63,60 +63,65 @@ pub fn cell_pos(index: usize, sud: &mut Sudoku) {
 		}
 		cell.pos = v;
 	}
-	let mut v = Vec::new();
-	for index2 in 0..((ROW_SIZE * ROW_SIZE) as usize) {
-		if index2 == index {
-			continue;
-		}
-		let (square_index2, row_index2, col_index2, nb2, pos) = {
-			let cell = sud.cells.get_mut(index2).unwrap();
-			(cell.square, cell.row, cell.col, cell.nb, cell.pos.clone())
-		};
-		if nb2 != None {
-			continue;
-		}
-		if square_index == square_index2 {
-			v.extend(del_square(sud, square_index));
-		}
-		if row_index == row_index2 {
-			v.extend(del_row(sud, row_index));
-		}
-		if col_index == col_index2 {
-			v.extend(del_col(sud, col_index));
-		}
-	}
-	v.sort();
-	v.dedup();
-	let cell = sud.cells.get_mut(index).unwrap();
-	let mut tmp = cell.pos.clone();
-//	if col_index == 3 && row_index == 0 {
-//		print!("del:{:?} before:{:?} ", v, tmp);
-//	}
-	for i in 0..v.len() {
-		let x = v.get(i);
-		for ind in 0..tmp.len() {
-			if x == tmp.get(ind) {
-				tmp.remove(ind);
+	for size in 2..4 {
+		let mut v = Vec::new();
+		for index2 in 0..((ROW_SIZE * ROW_SIZE) as usize) {
+			if index2 == index {
+				continue;
+			}
+			let (square_index2, row_index2, col_index2, nb2, pos) = {
+				let cell = sud.cells.get_mut(index2).unwrap();
+				(cell.square, cell.row, cell.col, cell.nb, cell.pos.clone())
+			};
+			if nb2 != None {
+				continue;
+			}
+			if square_index == square_index2 {
+				v.extend(del_square(sud, square_index, size));
+			}
+			if row_index == row_index2 {
+				v.extend(del_row(sud, row_index, size));
+			}
+			if col_index == col_index2 {
+				v.extend(del_col(sud, col_index, size));
 			}
 		}
-	}
-//	if col_index == 3 && row_index == 0 {
-//		println!("after:{:?}", tmp);
-//	}
-	cell.pos = tmp;
-	//	if square_index == 1 {
-	//		println!("{:?}", cell.pos);
+		v.sort();
+		v.dedup();
+		let cell = sud.cells.get_mut(index).unwrap();
+		let mut tmp = cell.pos.clone();
+	//	if col_index == 3 && row_index == 0 {
+	//		print!("del:{:?} before:{:?} ", v, tmp);
 	//	}
+		for i in 0..v.len() {
+			let x = v.get(i);
+			for ind in 0..tmp.len() {
+				if x == tmp.get(ind) {
+					tmp.remove(ind);
+				}
+			}
+		}
+		if tmp.len() == 0 {
+			return;
+		}
+	//	if col_index == 3 && row_index == 0 {
+	//		println!("after:{:?}", tmp);
+	//	}
+		cell.pos = tmp;
+		//	if square_index == 1 {
+		//		println!("{:?}", cell.pos);
+		//	}
+	}
 }
 
-fn del_square(sud: &mut Sudoku, square_index: u8) -> Vec<u8> {
+fn del_square(sud: &mut Sudoku, square_index: u8, size: usize) -> Vec<u8> {
 	let mut del: Vec<u8> = Vec::new();
 	let mut tmp: Vec<Vec<u8>> = Vec::new();
 	let square = sud.square(square_index);
 	for i in 0..ROW_SIZE {
 		let cell = square.cells.get(i as usize).unwrap();
 		let pos: Vec<u8> = cell.pos.clone();
-		if pos.len() == 2 {
+		if pos.len() == size {
 			tmp.push(pos);
 		}
 	}
@@ -128,6 +133,9 @@ fn del_square(sud: &mut Sudoku, square_index: u8) -> Vec<u8> {
 			if tmp.get(y) == tmp.get(y2) {
 				del.push(*tmp.get(y).unwrap().get(0).unwrap());
 				del.push(*tmp.get(y).unwrap().get(1).unwrap());
+				if size == 3 {
+					del.push(*tmp.get(y).unwrap().get(2).unwrap());
+				}
 			}
 		}
 	}
@@ -139,14 +147,14 @@ fn del_square(sud: &mut Sudoku, square_index: u8) -> Vec<u8> {
 	return del;
 }
 
-fn del_row(sud: &mut Sudoku, row_index: u8) -> Vec<u8> {
+fn del_row(sud: &mut Sudoku, row_index: u8, size: usize) -> Vec<u8> {
 	let mut del: Vec<u8> = Vec::new();
 	let mut tmp: Vec<Vec<u8>> = Vec::new();
 	let row = sud.row(row_index);
 	for i in 0..ROW_SIZE {
 		let cell = row.row.get(i as usize).unwrap();
 		let pos: Vec<u8> = cell.pos.clone();
-		if pos.len() == 2 {
+		if pos.len() == size {
 			tmp.push(pos);
 		}
 	}
@@ -158,6 +166,9 @@ fn del_row(sud: &mut Sudoku, row_index: u8) -> Vec<u8> {
 			if tmp.get(y) == tmp.get(y2) {
 				del.push(*tmp.get(y).unwrap().get(0).unwrap());
 				del.push(*tmp.get(y).unwrap().get(1).unwrap());
+				if size == 3 {
+					del.push(*tmp.get(y).unwrap().get(2).unwrap());
+				}
 			}
 		}
 	}
@@ -169,14 +180,14 @@ fn del_row(sud: &mut Sudoku, row_index: u8) -> Vec<u8> {
 	return del;
 }
 
-fn del_col(sud: &mut Sudoku, col_index: u8) -> Vec<u8> {
+fn del_col(sud: &mut Sudoku, col_index: u8, size: usize) -> Vec<u8> {
 	let mut del: Vec<u8> = Vec::new();
 	let mut tmp: Vec<Vec<u8>> = Vec::new();
 	let col = sud.column(col_index);
 	for i in 0..ROW_SIZE {
 		let cell = col.cells.get(i as usize).unwrap();
 		let pos: Vec<u8> = cell.pos.clone();
-		if pos.len() == 2 {
+		if pos.len() == size {
 			tmp.push(pos);
 		}
 	}
@@ -188,6 +199,9 @@ fn del_col(sud: &mut Sudoku, col_index: u8) -> Vec<u8> {
 			if tmp.get(y) == tmp.get(y2) {
 				del.push(*tmp.get(y).unwrap().get(0).unwrap());
 				del.push(*tmp.get(y).unwrap().get(1).unwrap());
+				if size == 3 {
+					del.push(*tmp.get(y).unwrap().get(2).unwrap());
+				}
 			}
 		}
 	}
