@@ -18,7 +18,6 @@ impl<'a> Column<'a> {
 	}
 	pub fn get_pos(&self) -> Vec<u8> {
 		let v: Vec<u8> = self.cells.iter()
-			.skip(self.index as usize)
 			.filter(|x| x.nb.is_some())
 			.map(|x| x.nb.unwrap())
 			.collect();
