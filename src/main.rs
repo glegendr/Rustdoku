@@ -30,29 +30,36 @@ const GRILL: &[Option<u8>] = &[
 fn recurse(mut sudoku: Sudoku) -> Result<Sudoku, SudokuErr> {
 	let mut grill = resolv(sudoku);
 	if !grill_full(&grill) {
-		let mut pos = 0;
-		let max = get_pos_max(&grill);
-		while pos < max {
-			let mut new_grill = try_a_pos(grill.clone(), pos);
+		let mut pos_index = 0;
+		let cell_index = find_first_none(&grill);
+		let cell = grill.cells.get(cell_index as usize).unwrap();
+		let max = cell.pos.len();
+		for pos_index in 0..cell.pos.len() {
+			let cell2 = grill.cells.get(cell_index as usize).unwrap();
+			let mut pos = *cell2.pos.get(pos_index).unwrap();
+			let mut new_grill = grill.clone();
+			new_grill.replace(Some(pos), cell_index);
 			new_grill.get_pos();
 			match recurse(new_grill) {
 				Ok(recurs_grill) => return Ok(recurs_grill),
-					Err(_) => pos += 1,
+				Err(_) => (),
 			}
 		}
 		Err(SudokuErr::GrillSize)
 	} else {
 		grill.get_pos();
-/*		println!("\n----------Start----------\n");
-		for i in 0..81 {
-			let (cell_col, cell_row, cell_pos) = {
-				let cell = grill.cells.get(i).unwrap();
-				(cell.col, cell.row, cell.pos.clone())
-			};
-			println!("{} {} {:?}", cell_col, cell_row, cell_pos);
-		}*/
 		Ok(grill)
 	}
+}
+
+fn find_first_none(sudoku: &Sudoku) -> u8 {
+	for i in 0..(ROW_SIZE * ROW_SIZE) {
+		let cell = sudoku.cells.get(i as usize).unwrap();
+		if cell.nb == None {
+			return i;
+		}
+	}
+	0
 }
 
 fn try_a_pos(mut sudoku: Sudoku, mut pos: u8) -> Sudoku {
