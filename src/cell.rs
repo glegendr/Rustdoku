@@ -2,7 +2,7 @@ use sudoku::Sudoku;
 use ROW_SIZE;
 use get_square;
 
-#[derive(Debug, Eq)]
+#[derive(Debug, Eq, Clone)]
 pub struct Cell {
 	pub nb: Option<u8>,
 	pub pos: Vec<u8>,
@@ -40,6 +40,8 @@ pub fn cell_pos(index: usize, sud: &mut Sudoku) {
 		(cell.col, cell.row, cell.square, cell.nb)
 	};
 	if nb != None {
+		let cell = sud.cells.get_mut(index).unwrap();
+		cell.pos.clear();
 		return;
 	}
 	let (col, row, square) = {

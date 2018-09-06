@@ -12,6 +12,7 @@ pub enum SudokuErr {
 	MultResult,
 }
 
+#[derive(Clone)]
 pub struct Sudoku {
 	pub cells: Box<[Cell]>,
 }
