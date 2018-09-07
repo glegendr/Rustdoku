@@ -2,10 +2,6 @@ extern crate colored;
 
 use colored::*;
 use sudoku::{Sudoku, SudokuErr};
-use row::Row;
-use column::Column;
-use square::Square;
-use cell::Cell;
 mod row;
 mod square;
 mod column;
@@ -19,13 +15,11 @@ use std::path::Path;
 const ROW_SIZE: u8 = 9;
 const MIN_CELLS_FILLED: usize = 17;
 
-fn recurse(mut sudoku: Sudoku) -> Result<Sudoku, SudokuErr> {
+fn recurse(sudoku: Sudoku) -> Result<Sudoku, SudokuErr> {
 	let mut grill = resolv(sudoku);
 	if !grill_full(&grill) {
-		let mut pos_index = 0;
 		let cell_index = find_first_none(&grill);
 		let cell = grill.cells.get(cell_index as usize).unwrap();
-		let max = cell.pos.len();
 		for pos_index in 0..cell.pos.len() {
 			let cell2 = grill.cells.get(cell_index as usize).unwrap();
 			let mut pos = *cell2.pos.get(pos_index).unwrap();
@@ -37,7 +31,7 @@ fn recurse(mut sudoku: Sudoku) -> Result<Sudoku, SudokuErr> {
 				Err(_) => (),
 			}
 		}
-		Err(SudokuErr::GrillSize)
+		Err(SudokuErr::ImpossibleGrill)
 	} else {
 		grill.get_pos();
 		Ok(grill)
@@ -52,30 +46,6 @@ fn find_first_none(sudoku: &Sudoku) -> u8 {
 		}
 	}
 	0
-}
-
-fn try_a_pos(mut sudoku: Sudoku, mut pos: u8) -> Sudoku {
-	for i in 0..(ROW_SIZE * ROW_SIZE) {
-		let (cell_nb, cell_pos) = {
-			let cell = sudoku.cells.get(i as usize).unwrap();
-			(cell.nb, cell.pos.clone())
-		};
-		if cell_nb != None || cell_pos.len() == 0 {
-			continue;
-		}
-		for n_pos in 0..cell_pos.len() {
-			if pos == 0 {
-				//				println!("{} {} {:?}", pos, n_pos, cell_pos);
-				let mut new_sudoku = sudoku.clone();
-				new_sudoku.replace(Some(*cell_pos.get(n_pos).unwrap()), i);
-				print_sudoku(&new_sudoku);
-				println!("");
-				return new_sudoku;
-			}
-			pos -= 1;
-		}
-	}
-	sudoku
 }
 
 fn grill_full(sudoku: &Sudoku) -> bool {
@@ -98,18 +68,6 @@ fn grill_full(sudoku: &Sudoku) -> bool {
 		}
 	}
 	true
-}
-
-fn get_pos_max(sudoku: &Sudoku) -> u8 {
-	let cells = &sudoku.cells;
-	let mut cmpt = 0;
-	for i in 0..(ROW_SIZE * ROW_SIZE) {
-		let cell = cells.get(i as usize).unwrap();
-		if cell.nb == None {
-			cmpt += cell.pos.len();
-		}
-	}
-	cmpt as u8
 }
 
 fn resolv(mut grill: Sudoku) -> Sudoku {
@@ -166,7 +124,7 @@ fn read_file() -> Vec<Option<u8>> {
 	let mut contents = String::new();
 	f.read_to_string(&mut contents).expect("something went wrong reading the file");
 	let mut vec: Vec<Option<u8>> = Vec::new();
-	for (i, c) in contents.chars().enumerate() {
+	for (_, c) in contents.chars().enumerate() {
 		if c <= '9' && c > '0' {
 			vec.push(Some(c as u8 - 48));
 		} else if c == '.' {

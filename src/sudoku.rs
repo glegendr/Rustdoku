@@ -4,12 +4,12 @@ use square::Square;
 use row::Row;
 use ROW_SIZE;
 use MIN_CELLS_FILLED;
-use print_sudoku;
 
 #[derive(Debug)]
 pub enum SudokuErr {
 	GrillSize,
 	MultResult,
+	ImpossibleGrill
 }
 
 #[derive(Clone)]

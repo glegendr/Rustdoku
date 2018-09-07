@@ -1,27 +1,3 @@
-use sudoku::Sudoku;
-use cell::Cell;
-use column::Column;
-use square::Square;
-use row::Row;
-use ROW_SIZE;
-use get_square;
-use grill_full;
-use get_pos_max;
-use try_a_pos;
-
-const GRILL: &[Option<u8>] = &[
-	Some(1), Some(2), Some(3), None, None, None, None, None, None,
-	Some(8), Some(7), Some(6), None, None, None, None, None, Some(1),
-	None, Some(9), Some(4), Some(8), None, None, None, None, None,
-	None, Some(6), None, None, Some(7), None, None, None, None,
-	None, None, None, None, None, Some(8), None, None, None,
-	None, None, None, Some(3), Some(4), None, None, None, None,
-	None, None, None, None, None, None, Some(1), Some(7), Some(9),
-	None, None, Some(5), None, None, None, Some(6), None, None,
-	None, None, None, Some(6), Some(2), Some(1), None, None, None
-];
-
-
 #[cfg(test)]
 mod tests {
 	use super::*;

@@ -69,12 +69,9 @@ pub fn cell_pos(index: usize, sud: &mut Sudoku) {
 	for size in 2..4 {
 		let mut v = Vec::new();
 		for index2 in 0..((ROW_SIZE * ROW_SIZE) as usize) {
-		//	if index2 == index {
-		//		continue;
-		//	}
-			let (square_index2, row_index2, col_index2, nb2, pos) = {
+			let (square_index2, row_index2, col_index2, nb2) = {
 				let cell = sud.cells.get_mut(index2).unwrap();
-				(cell.square, cell.row, cell.col, cell.nb, cell.pos.clone())
+				(cell.square, cell.row, cell.col, cell.nb)
 			};
 			if nb2 != None {
 				continue;
@@ -96,9 +93,6 @@ pub fn cell_pos(index: usize, sud: &mut Sudoku) {
 		v.dedup();
 		let cell = sud.cells.get_mut(index).unwrap();
 		let mut tmp = cell.pos.clone();
-	//	if col_index == 6 {
-	//		print!("del:{:?} before:{:?} ", v, tmp);
-	//	}
 		for i in 0..v.len() {
 			let x = v.get(i);
 			for ind in 0..tmp.len() {
@@ -107,16 +101,10 @@ pub fn cell_pos(index: usize, sud: &mut Sudoku) {
 				}
 			}
 		}
-	//	if col_index == 6 {
-	//		println!("after:{:?}", tmp);
-	//	}
 		if tmp.len() == 0 {
 			continue;
 		}
 		cell.pos = tmp;
-		//	if square_index == 1 {
-		//		println!("{:?}", cell.pos);
-		//	}
 	}
 }
 
