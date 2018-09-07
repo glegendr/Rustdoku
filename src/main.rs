@@ -12,20 +12,12 @@ mod column;
 mod cell;
 mod sudoku;
 mod test;
+use std::fs::File;
+use std::io::prelude::*;
+use std::path::Path;
 
 const ROW_SIZE: u8 = 9;
 const MIN_CELLS_FILLED: usize = 17;
-const GRILL: &[Option<u8>] = &[
-	Some(1), None, None, None, None, Some(7), None, Some(9), None,
-	None, Some(3), None, None, Some(2), None, None, None, Some(8),
-	None, None, Some(9), Some(6), None, None, Some(5), None, None,
-	None, None, Some(5), Some(3), None, None, Some(9), None, None,
-	None, Some(1), None, None, Some(8), None, None, None, Some(2),
-	Some(6), None, None, None, None, Some(4), None, None, None,
-	Some(3), None, None, None, None, None, None, Some(1), None,
-	None, Some(4), None, None, None, None, None, None, Some(7),
-	None, None, Some(7), None, None, None, Some(3), None, None
-];
 
 fn recurse(mut sudoku: Sudoku) -> Result<Sudoku, SudokuErr> {
 	let mut grill = resolv(sudoku);
@@ -165,12 +157,32 @@ fn print_sudoku(sudoku: &Sudoku) {
 	}
 }
 
+
+fn read_file() -> Vec<Option<u8>> {
+	if !Path::new("sudoku.txt").exists() {
+		panic!("This is a terrible mistake ! You don't create sudoku.txt");
+	}
+	let mut f = File::open("sudoku.txt").expect("file not found");
+	let mut contents = String::new();
+	f.read_to_string(&mut contents).expect("something went wrong reading the file");
+	let mut vec: Vec<Option<u8>> = Vec::new();
+	for (i, c) in contents.chars().enumerate() {
+		if c <= '9' && c > '0' {
+			vec.push(Some(c as u8 - 48));
+		} else if c == '.' {
+			vec.push(None);
+		} else if c != '\n' {
+			panic!("Your sudoku is weird, there is '{}' in", c);
+		}
+	}
+	vec
+}
+
 fn main() {
-	let sudo = Sudoku::new(GRILL);
+	let grill = read_file();
+	let sudo = Sudoku::new(grill);
 	match sudo {
 		Ok(mut sudoku) => {
-			print_sudoku(&sudoku);
-			println!();
 			sudoku.get_pos();
 			match recurse(sudoku) {
 				Ok(sudoku) => {

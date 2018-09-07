@@ -18,7 +18,7 @@ pub struct Sudoku {
 }
 
 impl Sudoku {
-	pub fn new(grill: &[Option<u8>]) -> Result<Self, SudokuErr> {
+	pub fn new(grill: Vec<Option<u8>>) -> Result<Self, SudokuErr> {
 		if grill.iter().filter(|x| x.is_some()).count() < MIN_CELLS_FILLED {
 			return Err(SudokuErr::MultResult);
 		}
