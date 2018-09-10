@@ -19,3 +19,43 @@ impl<'a> Row<'a> {
 			.collect()
 	}
 }
+
+#[cfg(test)]
+mod tests {
+	use sudoku::*;
+	use sudoku::tests::make_grill_test;
+#[test]
+	fn test_row_new() {
+		let sudo = Sudoku::new(make_grill_test());
+		let sudo2 = sudo.unwrap();
+		let col = Sudoku::row(&sudo2, 0);
+		let tmp = col.row.get(0).unwrap();
+		assert_eq!(Some(1), tmp.nb);
+		let tmp = col.row.get(1).unwrap();
+		assert_eq!(Some(2), tmp.nb);
+		let tmp = col.row.get(2).unwrap();
+		assert_eq!(Some(3), tmp.nb);
+		let tmp = col.row.get(3).unwrap();
+		assert_eq!(None, tmp.nb);
+		let tmp = col.row.get(4).unwrap();
+		assert_eq!(None, tmp.nb);
+		let tmp = col.row.get(5).unwrap();
+		assert_eq!(None, tmp.nb);
+		let tmp = col.row.get(6).unwrap();
+		assert_eq!(None, tmp.nb);
+		let tmp = col.row.get(7).unwrap();
+		assert_eq!(None, tmp.nb);
+		let tmp = col.row.get(8).unwrap();
+		assert_eq!(None, tmp.nb);
+	}
+#[test]
+	fn test_sudoku_new() {
+		let sudo = Sudoku::new(make_grill_test());
+		assert!(sudo.is_ok());
+		let sudo2 = sudo.unwrap();
+		assert_eq!(3, sudo2.cells[2].nb.unwrap());
+		assert_eq!(2, sudo2.cells[2].col);
+		assert_eq!(0, sudo2.cells[2].row);
+		assert_eq!(0, sudo2.cells[2].square);
+	}
+}

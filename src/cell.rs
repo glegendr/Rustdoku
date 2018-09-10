@@ -5,10 +5,10 @@ use get_square;
 #[derive(Debug, Eq, Clone)]
 pub struct Cell {
 	pub nb: Option<u8>,
-	pub pos: Vec<u8>,
-	pub col: u8,
-	pub row: u8,
-	pub square: u8,
+		pub pos: Vec<u8>,
+		pub col: u8,
+		pub row: u8,
+		pub square: u8,
 }
 
 impl PartialEq for Cell {
@@ -123,15 +123,15 @@ fn del_square(sud: &mut Sudoku, square_index: u8, size: usize) -> Vec<u8> {
 		let count = tmp.iter().filter(|&x| *x == *tmp.get(y).unwrap()).count();
 		if count == size {
 			for i in 0..size {
-			del.push(*tmp.get(y).unwrap().get(i).unwrap());
+				del.push(*tmp.get(y).unwrap().get(i).unwrap());
 			}
 		}
 	}
 	del.sort();
 	del.dedup();
-//	if square_index == 2 && size == 3 {
-//		println!("{}: {:?}", square_index, del);
-//	}
+	//	if square_index == 2 && size == 3 {
+	//		println!("{}: {:?}", square_index, del);
+	//	}
 	return del;
 }
 
@@ -150,15 +150,15 @@ fn del_row(sud: &mut Sudoku, row_index: u8, size: usize) -> Vec<u8> {
 		let count = tmp.iter().filter(|&x| *x == *tmp.get(y).unwrap()).count();
 		if count == size {
 			for i in 0..size {
-			del.push(*tmp.get(y).unwrap().get(i).unwrap());
+				del.push(*tmp.get(y).unwrap().get(i).unwrap());
 			}
 		}
 	}
 	del.sort();
 	del.dedup();
-//	if del.len() != 0 {
-//		println!("{}: {:?}", row_index, del);
-//	}
+	//	if del.len() != 0 {
+	//		println!("{}: {:?}", row_index, del);
+	//	}
 	return del;
 }
 
@@ -176,18 +176,38 @@ fn del_col(sud: &mut Sudoku, col_index: u8, size: usize) -> Vec<u8> {
 	for y in 0..tmp.len() {
 		let count = tmp.iter().filter(|&x| x == tmp.get(y).unwrap()).count();
 		if col_index == 6  && size == 3 {
-//		println!("col:{} -> {}", col_index, count);
+			//		println!("col:{} -> {}", col_index, count);
 		}
 		if count == size {
 			for i in 0..size {
-			del.push(*tmp.get(y).unwrap().get(i).unwrap());
+				del.push(*tmp.get(y).unwrap().get(i).unwrap());
 			}
 		}
 	}
 	del.sort();
 	del.dedup();
-//	if col_index == 6 && size == 3 {
-//		println!("{}: {:?}", col_index, del);
-//	}
+	//	if col_index == 6 && size == 3 {
+	//		println!("{}: {:?}", col_index, del);
+	//	}
 	return del;
+}
+
+#[cfg(test)]
+mod tests {
+	use super::*;
+
+#[test]
+	fn test_cell_new() {
+		let col = 3;
+		let row = 3;
+		let index = 30;
+		let square = 4;
+		let nb = 6;
+
+		let cell = Cell::new(index, Some(nb));
+		assert_eq!(col, cell.col);
+		assert_eq!(row, cell.row);
+		assert_eq!(nb, cell.nb.unwrap());
+		assert_eq!(square, cell.square);
+	}
 }

@@ -7,7 +7,6 @@ mod square;
 mod column;
 mod cell;
 mod sudoku;
-mod test;
 use std::fs::File;
 use std::io::prelude::*;
 use std::path::Path;
@@ -28,7 +27,7 @@ fn recurse(sudoku: Sudoku) -> Result<Sudoku, SudokuErr> {
 			new_grill.get_pos();
 			match recurse(new_grill) {
 				Ok(recurs_grill) => return Ok(recurs_grill),
-				Err(_) => (),
+					Err(_) => (),
 			}
 		}
 		Err(SudokuErr::ImpossibleGrill)
@@ -152,4 +151,40 @@ fn main() {
 		},
 			Err(er) => println!("Error: Grill not well formated ({:?})", er),
 	};
+}
+#[cfg(test)]
+mod tests {
+	use grill_full;
+	use sudoku::*;
+#[test]
+	fn test_grill_full() {
+		let grill_true: Vec<Option<u8>> = vec![
+			Some(1), Some(2), Some(3), Some(4), Some(5), Some(6), Some(7), Some(8), Some(9),
+			Some(7), Some(8), Some(9), Some(1), Some(2), Some(3), Some(4), Some(5), Some(6),
+			Some(4), Some(5), Some(6), Some(7), Some(8), Some(9), Some(1), Some(2), Some(3),
+			Some(9), Some(1), Some(2), Some(3), Some(4), Some(5), Some(6), Some(7), Some(8),
+			Some(6), Some(7), Some(8), Some(9), Some(1), Some(2), Some(3), Some(4), Some(5),
+			Some(3), Some(4), Some(5), Some(6), Some(7), Some(8), Some(9), Some(1), Some(2),
+			Some(8), Some(9), Some(1), Some(2), Some(3), Some(4), Some(5), Some(6), Some(7),
+			Some(5), Some(6), Some(7), Some(8), Some(9), Some(1), Some(2), Some(3), Some(4),
+			Some(2), Some(3), Some(4), Some(5), Some(6), Some(7), Some(8), Some(9), Some(1)
+		];
+		let grill_false = vec![
+			Some(1), Some(3), Some(2), Some(4), Some(5), Some(6), Some(7), Some(8), Some(9),
+			Some(7), Some(8), Some(9), Some(1), Some(2), Some(3), Some(4), Some(5), Some(6),
+			Some(4), Some(5), Some(6), Some(7), Some(8), Some(9), Some(1), Some(2), Some(3),
+			Some(9), Some(1), Some(2), Some(3), Some(4), Some(5), Some(6), Some(7), Some(8),
+			Some(6), Some(7), Some(8), Some(9), Some(1), Some(2), Some(3), Some(4), Some(5),
+			Some(3), Some(4), Some(5), Some(6), Some(7), Some(8), Some(9), Some(1), Some(2),
+			Some(8), Some(9), Some(1), Some(2), Some(3), Some(4), Some(5), Some(6), Some(7),
+			Some(5), Some(6), Some(7), Some(8), Some(9), Some(1), Some(2), Some(3), Some(4),
+			Some(2), Some(3), Some(4), Some(5), Some(6), Some(7), Some(8), Some(9), Some(1)
+		];
+		let sudo_true = Sudoku::new(grill_true);
+		let sudo_false = Sudoku::new(grill_false);
+		let sudo2_true = sudo_true.unwrap();
+		let sudo2_false = sudo_false.unwrap();
+		assert_eq!(true, grill_full(&sudo2_true));
+		assert_eq!(false, grill_full(&sudo2_false));
+	}
 }
