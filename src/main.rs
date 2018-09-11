@@ -38,13 +38,31 @@ fn recurse(sudoku: Sudoku) -> Result<Sudoku, SudokuErr> {
 }
 
 fn find_first_none(sudoku: &Sudoku) -> u8 {
+	let mut ret: Vec<(u8, u8)> = Vec::new();
 	for i in 0..(ROW_SIZE * ROW_SIZE) {
 		let cell = sudoku.cells.get(i as usize).unwrap();
 		if cell.nb == None {
-			return i;
+			let tmp: (u8, u8) = (i, (cell.pos.len() as u8));
+			ret.push(tmp);
 		}
 	}
-	0
+	sort_vec(&mut ret);
+	let arr: (u8, u8) = *ret.get(0).unwrap();
+	arr.0
+}
+
+fn sort_vec(vector: &mut Vec<(u8, u8)>) -> &Vec<(u8, u8)> {
+	let max = vector.len();
+	for i in 0..max {
+		for y in 0..(max - 1) {
+			let x = *vector.get(y).unwrap();
+			let x2 = *vector.get(y + 1).unwrap();
+			if x.0 < x2.0 {
+				vector.swap(y, y + 1);
+			}
+		}
+	}
+	vector
 }
 
 fn grill_full(sudoku: &Sudoku) -> bool {
