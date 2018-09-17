@@ -29,6 +29,7 @@ Like this:
 
 ### Then, launch my project !
 To solve your sudoku use ```cargo run --release```
+
 Care you can cross errors:
 * GrillSize, this one mean your grill havn't 81 cases
 * Multresult, here you have multiples solutions so give us 17 - or more - numbers in your sudoku
