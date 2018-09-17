@@ -1,4 +1,4 @@
-use cell::Cell;
+use my_src::cell::Cell;
 use ROW_SIZE;
 
 pub struct Column<'a> {

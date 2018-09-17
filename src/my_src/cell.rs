@@ -1,4 +1,4 @@
-use sudoku::Sudoku;
+use my_src::sudoku::Sudoku;
 use ROW_SIZE;
 use get_square;
 

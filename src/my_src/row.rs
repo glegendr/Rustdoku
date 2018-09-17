@@ -1,4 +1,4 @@
-use cell::Cell;
+use my_src::cell::Cell;
 use ROW_SIZE;
 
 pub struct Row<'a> {
@@ -22,8 +22,8 @@ impl<'a> Row<'a> {
 
 #[cfg(test)]
 mod tests {
-	use sudoku::*;
-	use sudoku::tests::make_grill_test;
+	use lib::sudoku::*;
+	use lib::sudoku::tests::make_grill_test;
 #[test]
 	fn test_row_new() {
 		let sudo = Sudoku::new(make_grill_test());

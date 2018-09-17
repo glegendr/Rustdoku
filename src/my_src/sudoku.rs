@@ -1,18 +1,18 @@
-use cell::{Cell, cell_pos};
-use column::Column;
-use square::Square;
-use row::Row;
+use my_src::cell::{Cell, cell_pos};
+use my_src::column::Column;
+use my_src::square::Square;
+use my_src::row::Row;
 use ROW_SIZE;
 use MIN_CELLS_FILLED;
 
 #[derive(Debug)]
 pub enum SudokuErr {
 	GrillSize,
-		MultResult,
-		ImpossibleGrill
+	MultResult,
+	ImpossibleGrill
 }
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct Sudoku {
 	pub cells: Box<[Cell]>,
 }
@@ -61,6 +61,7 @@ impl Sudoku {
 		}
 		return my_bool;
 	}
+
 
 	pub fn exclusiv(&mut self) -> bool {
 		let mut my_bool = false;
@@ -213,7 +214,7 @@ impl Sudoku {
 
 #[cfg(test)]
 pub mod tests {
-	use super::*;
+	use lib::super::*;
 	pub fn make_grill_test() -> Vec<Option<u8>> {
 	vec![
 Some(1), Some(2), Some(3), None, None, None, None, None, None,
