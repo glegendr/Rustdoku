@@ -1,7 +1,6 @@
 extern crate colored;
 use self::colored::*;
 use std::fmt;
-use std::fmt::Write;
 mod my_src;
 pub use my_src::sudoku::{Sudoku, SudokuErr};
 const ROW_SIZE: u8 = 9;
@@ -89,23 +88,9 @@ fn find_first_none(sudoku: &Sudoku) -> u8 {
 			ret.push(tmp);
 		}
 	}
-	sort_vec(&mut ret);
+	ret.sort_by(|a, b| a.1.cmp(&b.1));
 	let arr: (u8, u8) = *ret.get(0).unwrap();
 	arr.0
-}
-
-fn sort_vec(vector: &mut Vec<(u8, u8)>) -> &Vec<(u8, u8)> {
-	let max = vector.len();
-	for _ in 0..max {
-		for y in 0..(max - 1) {
-			let x = *vector.get(y).unwrap();
-			let x2 = *vector.get(y + 1).unwrap();
-			if x.0 < x2.0 {
-				vector.swap(y, y + 1);
-			}
-		}
-	}
-	vector
 }
 
 fn grill_full(sudoku: &Sudoku) -> bool {
