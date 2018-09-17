@@ -214,7 +214,7 @@ impl Sudoku {
 
 #[cfg(test)]
 pub mod tests {
-	use lib::super::*;
+	use super::*;
 	pub fn make_grill_test() -> Vec<Option<u8>> {
 	vec![
 Some(1), Some(2), Some(3), None, None, None, None, None, None,

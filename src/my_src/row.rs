@@ -22,8 +22,8 @@ impl<'a> Row<'a> {
 
 #[cfg(test)]
 mod tests {
-	use lib::sudoku::*;
-	use lib::sudoku::tests::make_grill_test;
+	use my_src::sudoku::*;
+	use my_src::sudoku::tests::make_grill_test;
 #[test]
 	fn test_row_new() {
 		let sudo = Sudoku::new(make_grill_test());

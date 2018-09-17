@@ -28,8 +28,8 @@ impl<'a> Column<'a> {
 }
 #[cfg(test)]
 mod tests {
-	use sudoku::*;
-	use sudoku::tests::make_grill_test;
+	use my_src::sudoku::*;
+	use my_src::sudoku::tests::make_grill_test;
 #[test]
 	fn test_col_new() {
 		let sudo = Sudoku::new(make_grill_test());
