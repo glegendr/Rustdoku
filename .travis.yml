@@ -4,7 +4,7 @@ rust:
 script:
     - cargo build --verbose --all
     - cargo test --verbose --all
-    - cargo doc build --clean --strict
+    - cargo doc
 deploy:
     provider: pages
     skip-cleanup: true
