@@ -144,7 +144,7 @@ fn get_square(col: u8, row: u8) -> u8 {
 #[cfg(test)]
 mod tests {
 	use grill_full;
-	use sudoku::*;
+	use my_src::sudoku::*;
 #[test]
 	fn test_grill_full() {
 		let grill_true: Vec<Option<u8>> = vec![

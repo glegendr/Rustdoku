@@ -36,8 +36,8 @@ impl<'a> Square<'a> {
 }
 #[cfg(test)]
 mod tests {
-	use lib::sudoku::*;
-	use lib::sudoku::tests::make_grill_test;
+	use my_src::sudoku::*;
+	use my_src::sudoku::tests::make_grill_test;
 #[test]
 	fn test_square_new() {
 		let sudo = Sudoku::new(make_grill_test());
