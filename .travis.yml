@@ -4,10 +4,9 @@ rust:
 script:
     - cargo build --verbose --all
     - cargo test --verbose --tests
-    - cargo doc
+    - cargo doc --target-dir ./docs
 deploy:
     provider: pages
     skip-cleanup: true
     github-token: $GITHUB_TOKEN
     keep-history: true
-    local_dir: site
