@@ -8,17 +8,59 @@ const MIN_CELLS_FILLED: usize = 17;
 
 #[derive(Clone, Debug)]
 pub struct Rustdoku {
-	sudoku: Sudoku,
+sudoku: Sudoku,
 }
 
 impl Rustdoku {
+	/// This is creating the rustdoku and give it
+	/// # Example
+	///
+	/// ```
+	/// let mut doku: Rustdoku = Rustdoku::new(grill).unwrap();
+	/// ```
 	pub fn new(grill: Vec<Option<u8>>) -> Result<Self, SudokuErr> {
 		match Sudoku::new(grill) {
-			Ok(sudo) => Ok(Self {sudoku: sudo}),
-			Err(er) => Err(er),
+			Ok(mut sudo) => {
+				sudo.get_pos();
+				Ok(Self {sudoku: sudo})
+			},
+				Err(er) => Err(er),
 		}
 	}
 
+	/// This is the entry of this library, here it launch the algorithm.
+	/// # Example
+	///
+	/// ```
+	/// grill:
+	/// 1....7.9.
+	/// .3..2...8
+	/// ..96..5..
+	/// ..53..9..
+	/// .1..8...2
+	/// 6....4...
+	/// 3......1.
+	/// .4......7
+	/// ..7...3..
+	///
+	/// ...
+	///
+	/// let mut doku: Rustdoku = Rustdoku::new(grill).unwrap();
+	/// match doku.solve() {
+	///		Ok(rustdoku) => println!("{}", rustdoku),
+	///		Err(er) => println!("{:?}", er),
+	/// };
+	/// // It will display:
+	/// // 1 6 2 8 5 7 4 9 3
+	/// // 5 3 4 1 2 9 6 7 8
+	/// // 7 8 9 6 4 3 5 2 1
+	/// // 4 7 5 3 1 2 9 8 6
+	/// // 9 1 3 5 8 6 7 4 2
+	/// // 6 2 8 7 9 4 1 3 5
+	/// // 3 5 6 4 7 8 2 1 9
+	/// // 2 4 1 9 3 5 8 6 7
+	/// // 8 9 7 2 6 1 3 5 4
+	/// ```
 	pub fn solve(&mut self) -> Result<Self, SudokuErr> {
 		self.sudoku.get_pos();
 		let result =  recurse(&self.sudoku);
@@ -27,7 +69,7 @@ impl Rustdoku {
 				self.sudoku = sudo;
 				Ok(self.clone())
 			},
-			Err(er) => Err(er),
+				Err(er) => Err(er),
 		}
 	}
 }
@@ -51,12 +93,12 @@ impl fmt::Display for Rustdoku {
 			if i % 9 == 0  && i != 81 {
 				str.push('\n');
 			}
-	}
+		}
 		write!(f, "{}", str)
 	}
 }
 
-fn recurse(base: &Sudoku) -> Result<Sudoku, SudokuErr> {
+pub fn recurse(base: &Sudoku) -> Result<Sudoku, SudokuErr> {
 	let mut grill = resolv(base.clone());
 	if !grill_full(&grill) {
 		let cell_index = find_first_none(&grill);

@@ -18,6 +18,12 @@ pub struct Sudoku {
 }
 
 impl Sudoku {
+		/// create a new sudoku with the vector grill.
+		/// # Example
+		///
+		/// ```
+		/// let sudoku: Sudoku = Sudoku::new(grill);
+		/// ```
 	pub fn new(grill: Vec<Option<u8>>) -> Result<Self, SudokuErr> {
 		if grill.iter().filter(|x| x.is_some()).count() < MIN_CELLS_FILLED {
 			return Err(SudokuErr::MultResult);
@@ -31,18 +37,77 @@ impl Sudoku {
 		Ok (Self {cells: vec.into_boxed_slice()})
 	}
 
+		/// replace a cell with the number 'nb' at index 'index'.
+		/// # Example
+		///
+		/// ```
+		/// let sudoku = Sudoku::new(grill);
+		/// sudoku.replace(Some(8), 0);
+		/// sudoku.replace(None, 1);
+		///
+		/// assert_eq!(Some(8), sudoku.cells.get(0).unwrap().nb);
+		/// assert_eq!(None, sudoku.cells.get(1).unwrap().nb);
+		/// ```
 	pub fn replace(&mut self, nb: Option<u8>, index: u8) {
 		if let Some(elem) = self.cells.get_mut(index as usize) {
 			elem.nb = nb;
 		}
 	}
 
+		/// Get the posibility for all cells in the Sudoku.
+		/// # Example
+		///
+		/// ```
+		/// grill:
+		/// 1....7.9.
+		/// .3..2...8
+		/// ..96..5..
+		/// ..53..9..
+		/// .1..8...2
+		/// 6....4...
+		/// 3......1.
+		/// .4......7
+		/// ..7...3..
+		///
+		/// ...
+		///
+		/// let sudoku = Sudoku::new(grill);
+		/// sudoku.get_pos();
+		/// assert_eq!(vec![2, 5, 6, 8], sudoku.cells.get(1).unwrap().pos);
+		/// ```
 	pub fn get_pos(&mut self) {
 		for index  in 0..((ROW_SIZE * ROW_SIZE) as usize) {
 			cell_pos(index, self);
 		}
 	}
 
+
+		/// resolv with inclusiv method.
+		///
+		/// The inclusiv method places the numbers if there is only this possibility.
+		///
+		/// Return true if a number as been placed
+		/// # Example
+		///
+		/// ```
+		/// grill:
+		/// ...1.3..9
+		/// ...456..7
+		/// ...789..3
+		/// ........2
+		/// ........1
+		/// 1235476.8
+		/// ........4
+		/// .........
+		/// ........6
+		///
+		/// ...
+		///
+		/// let sudoku = Sudoku::new(grill);
+		/// sudoku.get_pos();
+		/// assert_eq!(true, sudoku.inclusive());
+		/// assert_eq!(Some(2), sudoku.cells.get(4).unwrap().nb);
+		/// ```
 	pub fn inclusive(&mut self) -> bool {
 		let mut my_bool = false;
 		for index in 0..((ROW_SIZE * ROW_SIZE) as usize) {
@@ -63,6 +128,32 @@ impl Sudoku {
 	}
 
 
+		/// resolv with exclusiv method.
+		///
+		/// The inclusiv method places the numbers if there is only this place in a square/column/row.
+		///
+		/// Return true if a number as been placed
+		/// # Example
+		///
+		/// ```
+		/// grill:
+		/// 1..8.....
+		/// .5...2...
+		/// 78.......
+		/// .92......
+		/// .....1...
+		/// ........8
+		/// .........
+		/// ..1....8.
+		/// .........
+		///
+		/// ...
+		///
+		/// let sudoku = Sudoku::new(grill);
+		/// sudoku.get_pos();
+		/// assert_eq!(true, sudoku.exclusiv());
+		/// assert_eq!(Some(2), sudoku.cells.get(1).unwrap().nb);
+		/// ```
 	pub fn exclusiv(&mut self) -> bool {
 		let mut my_bool = false;
 		for index in 0..((ROW_SIZE * ROW_SIZE) as usize) {
@@ -199,14 +290,83 @@ impl Sudoku {
 		return false;
 	}
 
+		/// this function will return the column at index 'index'
+		/// # Example
+		///
+		/// ```
+		/// grill:
+		/// 1....7.9.
+		/// .3..2...8
+		/// ..96..5..
+		/// ..53..9..
+		/// .1..8...2
+		/// 6....4...
+		/// 3......1.
+		/// .4......7
+		/// ..7...3..
+		///
+		/// ...
+		///
+		/// let sudoku: Sudoku = Sudoku::new(grill);
+		/// let col: Column = sudoku.column(1);
+		/// assert_eq!(1, col.index);
+		/// // col.cells == None, Some(3), None, None, Some(1), None, None, Some(4), None
+		/// ```
 	pub fn column(&self, index: u8) -> Column {
 		Column::new(&self.cells, index)
 	}
 
+		/// this function will return the row at index 'index'
+		/// # Example
+		///
+		/// ```
+		/// grill:
+		/// 1....7.9.
+		/// .3..2...8
+		/// ..96..5..
+		/// ..53..9..
+		/// .1..8...2
+		/// 6....4...
+		/// 3......1.
+		/// .4......7
+		/// ..7...3..
+		///
+		/// ...
+		///
+		/// let sudoku: Sudoku = Sudoku::new(grill);
+		/// let row: Row = sudoku.row(1);
+		/// let vec = vec![None, Some(3), None, None, Some(2), None, None, None, Some(8)];
+		/// let box = vec.into_boxed_slice();
+		/// assert_eq!(box, row.row);
+		/// ```
 	pub fn row(&self, index: u8) -> Row {
 		Row::new(&self.cells, index)
 	}
 
+		/// this function will return the square  at index 'index'
+		/// # Example
+		///
+		/// ```
+		/// grill:
+		/// 1....7.9.
+		/// .3..2...8
+		/// ..96..5..
+		/// ..53..9..
+		/// .1..8...2
+		/// 6....4...
+		/// 3......1.
+		/// .4......7
+		/// ..7...3..
+		///
+		/// ...
+		///
+		/// let sudoku: Sudoku = Sudoku::new(grill);
+		/// let sq: Square = sudoku.square(0);
+		/// let vec = vec![Some(1), None, None, None, Some(3), None, None, None, Some(9)];
+		/// let box = vec.into_boxed_slice();
+		/// assert_eq!(box, square.cells);
+		/// assert_eq!(0, square.index);
+		/// ```
 	pub fn square(&self, index: u8) -> Square {
 		Square::new(&self.cells, index)
 	}
