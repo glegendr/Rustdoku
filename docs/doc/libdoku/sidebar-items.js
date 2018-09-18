@@ -1,0 +1,1 @@
+initSidebarItems({"enum":[["SudokuErr",""]],"fn":[["recurse",""]],"struct":[["Rustdoku",""],["Sudoku",""]]});
