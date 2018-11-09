@@ -399,6 +399,13 @@
 <span id="399">399</span>
 <span id="400">400</span>
 <span id="401">401</span>
+<span id="402">402</span>
+<span id="403">403</span>
+<span id="404">404</span>
+<span id="405">405</span>
+<span id="406">406</span>
+<span id="407">407</span>
+<span id="408">408</span>
 </pre><pre class="rust ">
 <span class="kw">use</span> <span class="ident">my_src</span>::<span class="ident">cell</span>::{<span class="ident">Cell</span>, <span class="ident">cell_pos</span>};
 <span class="kw">use</span> <span class="ident">my_src</span>::<span class="ident">column</span>::<span class="ident">Column</span>;
@@ -417,6 +424,12 @@
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">Debug</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Sudoku</span> {
 	<span class="kw">pub</span> <span class="ident">cells</span>: <span class="ident">Box</span><span class="op">&lt;</span>[<span class="ident">Cell</span>]<span class="op">&gt;</span>,
+}
+
+    <span class="kw">impl</span> <span class="ident">PartialEq</span> <span class="kw">for</span> <span class="ident">Sudoku</span> {
+    <span class="kw">fn</span> <span class="ident">eq</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">other</span>: <span class="kw-2">&amp;</span><span class="ident">Sudoku</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> {
+        <span class="self">self</span>.<span class="ident">cells</span> <span class="op">==</span> <span class="ident">other</span>.<span class="ident">cells</span>
+    }
 }
 
 <span class="kw">impl</span> <span class="ident">Sudoku</span> {
@@ -438,6 +451,7 @@
 			.<span class="ident">collect</span>();
 		<span class="prelude-val">Ok</span> (<span class="self">Self</span> {<span class="ident">cells</span>: <span class="ident">vec</span>.<span class="ident">into_boxed_slice</span>()})
 	}
+
 
 		<span class="doccomment">/// replace a cell with the number &#39;nb&#39; at index &#39;index&#39;.</span>
 		<span class="doccomment">/// # Example</span>
