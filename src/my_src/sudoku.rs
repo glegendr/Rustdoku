@@ -17,6 +17,12 @@ pub struct Sudoku {
 	pub cells: Box<[Cell]>,
 }
 
+    impl PartialEq for Sudoku {
+    fn eq(&self, other: &Sudoku) -> bool {
+        self.cells == other.cells
+    }
+}
+
 impl Sudoku {
 		/// create a new sudoku with the vector grill.
 		/// # Example
@@ -36,6 +42,7 @@ impl Sudoku {
 			.collect();
 		Ok (Self {cells: vec.into_boxed_slice()})
 	}
+
 
 		/// replace a cell with the number 'nb' at index 'index'.
 		/// # Example
