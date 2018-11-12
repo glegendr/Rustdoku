@@ -163,8 +163,12 @@ fn find_first_none(sudoku: &Sudoku) -> u8 {
         }
     }
     ret.sort_by(|a, b| a.1.cmp(&b.1));
+    if ret.len() != 0 {
     let arr: (u8, u8) = *ret.get(0).unwrap();
     arr.0
+    } else {
+	    0
+    }
 }
 
 fn grill_full(sudoku: &Sudoku) -> bool {
@@ -214,10 +218,10 @@ fn get_square(col: u8, row: u8) -> u8 {
     }
 }
 
-
 #[cfg(test)]
 mod tests {
     use grill_full;
+    use recurse;
     use my_src::sudoku::*;
 #[test]
     fn test_grill_full() {
@@ -249,5 +253,27 @@ mod tests {
         let sudo2_false = sudo_false.unwrap();
         assert_eq!(true, grill_full(&sudo2_true));
         assert_eq!(false, grill_full(&sudo2_false));
+    }
+
+#[feature(test)]
+extern crate test;
+use self::Bencher;
+
+     #[bench]
+    fn bench_sudoku(b: &mut Bencher) {
+        let grill_true: Vec<Option<u8>> = vec![
+            Some(1), None, None, None, None, Some(7), None, Some(9), None,
+            None, Some(3), None, None, Some(2), None, None, None, Some(8),
+            None, None, Some(9), Some(6), None, None, Some(5), None, None,
+            None, None, Some(5), Some(3), None, None, Some(6), None, None,
+            None, Some(1), None, None, Some(8), None, None, None, Some(2),
+            Some(6), None, None, None, None, Some(4), None, None, None,
+            Some(3), None, None, None, None, None, None, Some(1), None,
+            None, Some(4), Some(1), None, None, None, None, None, Some(7),
+            None, None, Some(7), None, None, None, Some(3), None, None
+        ];
+        let sudo_true = Sudoku::new(grill_true);
+        let sudo2_true = sudo_true.unwrap();
+        b.iter(|| recurse(&sudo2_true, 1));
     }
 }
