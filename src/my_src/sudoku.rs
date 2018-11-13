@@ -4,6 +4,9 @@ use my_src::square::Square;
 use my_src::row::Row;
 use ROW_SIZE;
 use MIN_CELLS_FILLED;
+use std::fmt;
+extern crate colored;
+use self::colored::*;
 
 #[derive(Debug)]
 pub enum SudokuErr {
@@ -22,6 +25,31 @@ pub struct Sudoku {
         self.cells == other.cells
     }
 }
+
+impl fmt::Display for Sudoku {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        let mut i = 0;
+        let mut str: String = String::new();
+        for cell in self.cells.iter() {
+            let mut print: String = ".".to_string();
+            if cell.nb != None {
+                print = format!("{}", cell.nb.unwrap());
+            }
+            let sq = cell.square;
+            if sq % 2 == 0 {
+                str.push_str(format!("{} ", print.yellow().strikethrough().bold()).as_str());
+            } else {
+                str.push_str(format!("{} ", print.red().bold()).as_str());
+            }
+            i = i + 1;
+            if i % 9 == 0  && i != 81 {
+                str.push('\n');
+            }
+        }
+        write!(f, "{}", str)
+    }
+}
+
 
 impl Sudoku {
 		/// create a new sudoku with the vector grill.
