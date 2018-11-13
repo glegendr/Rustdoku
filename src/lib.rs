@@ -63,7 +63,7 @@ impl Rustdoku {
     /// // 2 4 1 9 3 5 8 6 7
     /// // 8 9 7 2 6 1 3 5 4
     /// ```
-    pub fn solve(&mut self) -> Result<Self, SudokuErr> {
+    pub fn solve(&mut self, flags: (bool, bool)) -> Result<Self, SudokuErr> {
         self.sudoku.get_pos();
         let cpy = self.sudoku.clone();
         let par: Vec<Sudoku> = vec![cpy, self.sudoku.clone()];
@@ -74,8 +74,11 @@ impl Rustdoku {
             Ok(sudo) => {
                 match result2 {
                     Ok(sudo2) => {
-                        if sudo2 != sudo {
-                            return Err(SudokuErr::MultResult);
+                        if sudo2 != sudo && flags.1 == true {
+				if flags.0 == true {
+					println!("{}\n\n{}", sudo, sudo2);
+				}
+                        	return Err(SudokuErr::MultResult);
                         }
                         self.sudoku = sudo.clone();
                         Ok(self.clone())
@@ -119,9 +122,8 @@ impl fmt::Display for Rustdoku {
 pub fn recurse(base: &Sudoku, my_bool: usize) -> Result<Sudoku, SudokuErr> {
     let mut grill = resolv(base.clone());
     if !grill_full(&grill) {
-        let cell_index = find_first_none(&grill);
+        let cell_index = find_first_none(&grill, my_bool);
         let cell = grill.cells.get(cell_index as usize).unwrap().clone();
-        if my_bool == 0 {
             for pos_index in 0..cell.pos.len() {
                 let cell2 = grill.cells.get(cell_index as usize).unwrap();
                 let mut pos = *cell2.pos.get(pos_index).unwrap();
@@ -133,19 +135,6 @@ pub fn recurse(base: &Sudoku, my_bool: usize) -> Result<Sudoku, SudokuErr> {
                     Err(_) => (),
                 }
             }
-        } else {
-            for pos_index in (0..cell.pos.len()).rev() {
-                let cell2 = grill.cells.get(cell_index as usize).unwrap();
-                let mut pos = *cell2.pos.get(pos_index).unwrap();
-                let mut new_grill = grill.clone();
-                new_grill.replace(Some(pos), cell_index);
-                new_grill.get_pos();
-                match recurse(&new_grill, 1) {
-                    Ok(recurs_grill) => return Ok(recurs_grill),
-                    Err(_) => (),
-                }
-            }
-        }
         Err(SudokuErr::ImpossibleGrill)
     } else {
         grill.get_pos();
@@ -153,7 +142,7 @@ pub fn recurse(base: &Sudoku, my_bool: usize) -> Result<Sudoku, SudokuErr> {
     }
 }
 
-fn find_first_none(sudoku: &Sudoku) -> u8 {
+fn find_first_none(sudoku: &Sudoku, my_bool: usize) -> u8 {
     let mut ret: Vec<(u8, u8)> = Vec::new();
     for i in 0..(ROW_SIZE * ROW_SIZE) {
         let cell = sudoku.cells.get(i as usize).unwrap();
@@ -165,7 +154,11 @@ fn find_first_none(sudoku: &Sudoku) -> u8 {
     ret.sort_by(|a, b| a.1.cmp(&b.1));
     if ret.len() != 0 {
     let arr: (u8, u8) = *ret.get(0).unwrap();
-    arr.0
+    if my_bool == 0 {
+    	arr.0
+    } else {
+	    arr.0 + arr.1 - 1 
+	    }
     } else {
 	    0
     }
