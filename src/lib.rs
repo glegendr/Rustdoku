@@ -190,11 +190,10 @@ fn resolv(mut grill: Sudoku) -> Sudoku {
     let mut my_bool = true;
     while my_bool == true {
         my_bool = false;
+	grill.get_pos();
         if grill.inclusive() == true {
-            grill.get_pos();
             my_bool = true;
-        }
-        if grill.exclusiv() == true {
+	} else if grill.exclusiv() == true {
             my_bool = true;
         }
     }
