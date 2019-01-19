@@ -2,7 +2,7 @@
 Hello this is my Sudoku solver in Rust !
 
 ## How could i install it ?
-You must have `rust` installed !
+You must have `rust` installed !   
 **CARE if you want to launch last version of my Rustdoku you have to get Rust Nightly**   
 Then you can clone this wounderful project.
 
