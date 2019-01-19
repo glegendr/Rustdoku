@@ -3,6 +3,7 @@ Hello this is my Sudoku solver in Rust !
 
 ## How could i install it ?
 You must have `rust` installed !
+**CARE if you want to launch last version of my Rustdoku you have to get Rust Nightly**
 Then you can clone this wounderful project.
 
 ## Then ? How could i solv my sudoku ?
@@ -28,6 +29,7 @@ Like this:
 ```
 
 ### Then, launch my project !
+**If you havn't Rust nightly run ```git checkout 3b2e526444503ac36d3c96baf0e39fbd8d7c1ed9```**
 To solve your sudoku use ```cargo run --release```
 
 Care you can cross errors:
